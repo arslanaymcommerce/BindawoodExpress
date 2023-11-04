@@ -1,4 +1,4 @@
-view: darkstore_product_onhand_v_bd {
+view: darkstore_product_onhand_v {
     derived_table: {
       sql: /*select spree_product_id , spt.full_name product_desc, v.sku , sb.barcode,
               COALESCE(m.stock_quantity,0) AFS, (COALESCE(m.uploaded_stock_quantity,0) - COALESCE(m.stock_quantity,0)) Reserve , COALESCE(m.stock_quantity,0)  + (COALESCE(m.uploaded_stock_quantity,0) - COALESCE(m.stock_quantity,0)) StockonHand,

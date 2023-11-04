@@ -691,6 +691,6 @@ sql_always_where:  (danube_supermarket_translations.locale = 'en') ;;
   }
 }
 
-explore: offline_pricing_cancel_darkstore_bd {}
-explore: offline_pricing_darkstore_bd {}
-explore: darkstore_product_onhand_v_bd {}
+explore: offline_pricing_cancel_darkstore {}
+explore: offline_pricing_darkstore {}
+explore: darkstore_product_onhand_v {}

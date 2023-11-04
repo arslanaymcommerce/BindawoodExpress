@@ -1,4 +1,4 @@
-view: offline_pricing_darkstore_bd {
+view: offline_pricing_cancel_darkstore {
     derived_table: {
       sql: select o.id ,
               s.spree_zone_id as supermarket_id,
@@ -31,20 +31,20 @@ view: offline_pricing_darkstore_bd {
               mp.bundle_items as bundle_items,
               sp.payment_name as payment_name,
 
-        f.state/*,
+        f.state,
         max(vs.created_at) out_for_delivery_date,
-        vs.object_changes out_for_delivery_status,
+        CAST( vs.object_changes AS TEXT ) out_for_delivery_status,
         max(vs2.created_at) delivered_Date,
-        vs2.object_changes delivery_Status,
+        vs2.object_changes delivery_Status/*,
         now() - interval '1 day' current_datetime,
         (EXTRACT(
         EPOCH FROM now() - COALESCE(max(vs.created_at),null,max(vs2.created_at)))
         /3600)::int numofhours*/
 
         from public.spree_fulfilments f
-        ---full outer join public.versions vs  on vs.item_id = f.id and vs.item_type = 'Spree::Fulfilment' and ((vs.object_changes::text  like '%"assigned_to_delivery_batch", "out_for_delivery"%' ) /*or (v.object_changes::text like '%delivered%')*/  )
+        full outer join public.versions vs  on vs.item_id = f.id and vs.item_type = 'Spree::Fulfilment' and ((vs.object_changes::text  like '%"assigned_to_delivery_batch", "out_for_delivery"%' ) /*or (v.object_changes::text like '%delivered%')*/  )
         left join  spree_orders o on f.order_id = o.id
-        --full outer join public.versions vs2 on  vs2.item_id = f.id and vs2.item_type = 'Spree::Fulfilment' and (vs2.object_changes::text like '%delivered%')
+        full outer join public.versions vs2 on  vs2.item_id = f.id and vs2.item_type = 'Spree::Fulfilment' and (vs2.object_changes::text like '%delivered%')
         left join spree_line_items i on
         i.order_id = o.id
         left join (
@@ -54,7 +54,7 @@ view: offline_pricing_darkstore_bd {
         spree_product_barcodes
         group by
         1) b on
-        b.product_id = (select max(product_id) from spree_variants vs where vs.id = i.variant_id) --i.variant_idi.variant_id
+        b.product_id = (select max(product_id) from spree_variants vs where vs.id = i.variant_id)
         left join danube_slot_to_orders s on
         s.order_id = i.order_id
         left join spree_variants v on
@@ -72,7 +72,7 @@ view: offline_pricing_darkstore_bd {
         group by
         1) b on
         p.child_product_id = b.product_id) p on
-        p.master_product_id = (select max(product_id) from spree_variants vs where vs.id = i.variant_id)
+        p.master_product_id =  (select max(product_id) from spree_variants vs where vs.id = i.variant_id) -- i.variant_id
         left join (
         select
         master_product_id, count(child_product_id) as bundle_items
@@ -99,16 +99,18 @@ view: offline_pricing_darkstore_bd {
         sp.order_id = o.id
         where
         i.quantity > 0
-        and f.state in ('delivered_partially_returned', 'delivered','out_for_delivery', 'partially_delivered')
-        --  and o.order_type = 'Express'
+        and f.state = 'canceled'
+        -- and o.order_type = 'Express'
         and i.variant_id not in (select v.id variant_id from public.danube_supermarket_products p , spree_variants v
         where v.product_id = p.product_id)
-        ---and COALESCE(o.parent_id,-1) = -1
+        --and COALESCE(o.parent_id,-1) = -1
+        and s.spree_zone_id in (97)
+        and  CAST( vs.object_changes AS TEXT ) like '%out_for_delivery%'
         and v.sku not in ('11572820', '11572830', '11572840', '11572850', '11572860', '11572870', '11572880', '11572890', '11572900', '11572910', '11572920', '11572930', '11572940', '11572950', '11572960', '11572970', '11573170', '11573180', '11573190', '11573200', '11573210', '11573260', '11573270', '11573280', '11573310', '11573320', '11573330', '11573340', '11573350', '11573360', '11573370', '11573380', '11573390', '11573400', '11573410', '11573420', '11573570', '11573580', '11573600', '11573610', '11573650', '11573670', '11573680', '11573690', '11573700', '11573710', '11573720', '11573740', 'Mobily20', 'Mobily25', 'Mobily34.50', 'Mobily57.50', 'Mobily115', 'Mobily230', 'Mobily300', 'Mobily395', 'Sawa20', 'Sawa30', 'Sawa50', 'Sawa100', 'Sawa200', 'Sawa300', 'Zain020', 'Zain029', 'Zain034', 'Zain057', 'Zain059', 'Zain0115', 'Zain0140', 'Zain0230', 'Zain0249', 'Zain0345', 'Zain0460', 'Zain0575', 'gc50', 'gc100', 'gc150', 'gc200', 'gc250', 'gc300', 'gc500', 'gc1000')
 
-        and s.spree_zone_id in (97)
+
         group by
-        ---vs.object_changes,vs2.object_changes,
+        vs.object_changes,vs2.object_changes,
         o.number , o.completed_At,  f.state, o.id ,s.spree_zone_id,
         o.store_id,
         o.promo_total,
@@ -125,104 +127,6 @@ view: offline_pricing_darkstore_bd {
         p.quantity,
         mp.bundle_items,
         sp.payment_name
-
-        union all
-
-        select
-        o.id,
-        s.spree_zone_id as supermarket_id,
-        o.user_id,
-        'test@test.com' email,
-        o.number,
-        o.completed_at,
-        o.store_id,
-        ---o.promo_total,
-        o.promo_total - COALESCE((select sum(amount) from spree_promotion_actions sp , spree_adjustments sa
-        where sp.id = sa.source_id
-        and sp.type = 'Spree::Promotion::Actions::FreeShipping'--id = 1337
-        --and sp.deleted_at is not null
-        and sa.eligible = 'true'
-        and adjustable_id = o.id),0) promo_total,
-        i.id as line_item_id,
-        i.quantity,
-        i.requested_quantity,
-        0 Total,
-        i.price,
-        i.price as offline_price,
-        'no' as on_sale,
-        (case when position(',' in cast(b.barcode as text)) > 0
-        then substring(cast(b.barcode as text),2,position(',' in cast(b.barcode as text))-2)
-        else substring(cast(b.barcode as text),2,length(cast(b.barcode as text))-2)
-        end)barcode,
-        s.time_slot_date,
-        b.weight weight_increment,
-        i.custom_product_id as variant_id,
-        p.child_product_id,
-        p.barcode as bundle_barcode,
-        p.quantity as bundle_quantity,
-        mp.bundle_items as bundle_items,
-        sp.payment_name as payment_name,
-        f.state
-        from
-        spree_orders o
-        left join spree_custom_line_items i on
-        i.order_id = o.id
-        left join (
-        select
-        id product_id, max(barcodes) as barcode,weight
-        from
-        spree_custom_products b
-        group by
-        1,3) b on
-        b.product_id = i.custom_product_id
-        left join danube_slot_to_orders s on
-        s.order_id = i.order_id
-        left join (
-        select
-        master_product_id, child_product_id, quantity, barcode
-        from
-        spree_bundle_products p
-        left join (
-        select
-        product_id, max(barcode) as barcode
-        from
-        spree_product_barcodes
-        group by
-        1) b on
-        p.child_product_id = b.product_id) p on
-        p.master_product_id = i.custom_product_id
-        left join (
-        select
-        master_product_id, count(child_product_id) as bundle_items
-        from
-        spree_bundle_products
-        group by
-        1) mp on
-        mp.master_product_id = i.custom_product_id
-        left join spree_fulfilments f on
-        f.order_id = o.id
-        left join (
-        select
-        spree_payments.order_id as "order_id", ARRAY_TO_STRING(array(select unnest(array_agg(distinct spree_payment_method_translations.name )) order by 1), ',') as payment_name
-        from
-        spree_payments
-        left join public.spree_payment_methods as spree_payment_methods on
-        spree_payments.payment_method_id = spree_payment_methods.id
-        left join public.spree_payment_method_translations as spree_payment_method_translations on
-        spree_payment_methods.id = spree_payment_method_translations.spree_payment_method_id
-        where
-        (spree_payment_method_translations.name not ilike 'الدفع عند الاستلام'
-        and spree_payment_method_translations.name not ilike 'الرصيد المتاح'
-        or spree_payment_method_translations.name is null)
-        group by
-        1) sp on
-        sp.order_id = o.id
-        where
-        i.custom_product_id is not null
-        and i.quantity > 0
-        and s.spree_zone_id in (97)
-        and COALESCE(o.parent_id,-1) = -1
-        and f.state in ('delivered_partially_returned', 'delivered','partially_delivered')
         ;;
     }
 
@@ -235,7 +139,6 @@ view: offline_pricing_darkstore_bd {
       type: number
       sql: ${TABLE}.id ;;
     }
-
 
     dimension: price1 {
       type: number
@@ -252,8 +155,6 @@ view: offline_pricing_darkstore_bd {
 
       value_format: "0.00"
     }
-##THEN COALESCE(${TABLE}.offline_price,${TABLE}.price)
-##COALESCE(${TABLE}.offline_price,${TABLE}.price)
 
     dimension: price {
       type: number
@@ -362,10 +263,10 @@ view: offline_pricing_darkstore_bd {
       sql: ${TABLE}.price * ${TABLE}.quantity ;;
     }
 
-##dimension:  numofhours {
-##  type: number
-##  sql: ${TABLE}.numofhours;;
-##}
+##    dimension:  numofhours {
+##      type: number
+##      sql: ${TABLE}.numofhours;;
+##    }
 
     measure: Total {
       type: sum
@@ -400,11 +301,11 @@ view: offline_pricing_darkstore_bd {
       sql: ${TABLE}.time_slot_date ;;
     }
 
+
     dimension: supermarket_id {
       case: {
-
         when: {
-          sql: ${TABLE}.supermarket_id  = 97 ;;
+          sql: ${TABLE}.supermarket_id in (97) ;;
           label: "7011"
         }
 
