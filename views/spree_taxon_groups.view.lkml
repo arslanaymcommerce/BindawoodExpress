@@ -1,0 +1,32 @@
+view: spree_taxon_groups {
+  sql_table_name: public.spree_taxon_groups ;;
+  drill_fields: [id]
+
+  dimension: id {
+    primary_key: yes
+    type: number
+    sql: ${TABLE}."id" ;;
+  }
+  dimension_group: created {
+    type: time
+    timeframes: [raw, time, date, week, month, quarter, year]
+    sql: ${TABLE}."created_at" ;;
+  }
+  dimension: key {
+    type: string
+    sql: ${TABLE}."key" ;;
+  }
+  dimension: name {
+    type: string
+    sql: ${TABLE}."name" ;;
+  }
+  dimension_group: updated {
+    type: time
+    timeframes: [raw, time, date, week, month, quarter, year]
+    sql: ${TABLE}."updated_at" ;;
+  }
+  measure: count {
+    type: count
+    drill_fields: [id, name]
+  }
+}
