@@ -98,6 +98,11 @@ view: spree_variants {
     type: number
     sql: ${TABLE}."width" ;;
   }
+
+  dimension: marketingbundle {
+    type: yesno
+    sql: ${TABLE}.sku ILIKE 'markt%' or ${TABLE}.sku ILIKE 'dodc%' ;;
+  }
   measure: count {
     type: count
     drill_fields: [id]
