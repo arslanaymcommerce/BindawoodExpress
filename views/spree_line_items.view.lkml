@@ -100,7 +100,136 @@ view: spree_line_items {
   dimension: variant_id {
     type: number
     sql: ${TABLE}."variant_id" ;;
+
   }
+
+  dimension: bundle_quantity{
+    type: number
+    sql: ${spree_bundle_products.quantity} ;;
+  }
+
+  dimension: childcount{
+    type: number
+    sql: ${spree_bundle_products.child_count} ;;
+  }
+
+  dimension: barcode_1{
+    type: string
+    sql: ${spree_bundle_products.barcode} ;;
+    value_format: "0"
+  }
+
+  dimension: barcode_2{
+    type: string
+    sql: ${spree_product_barcodes.barcode} ;;
+    value_format: "0"
+  }
+
+
+  dimension: price_new {
+    type: number
+    sql: CASE
+          WHEN ${barcode_1} IS NULL THEN ${price}
+          ELSE ${price}/(${bundle_quantity}*${childcount})
+          END;;
+    value_format: "0.00"
+  }
+
+  dimension: Requested_quantity_new_dimension {
+    type: number
+    sql: CASE
+                   WHEN ${spree_variants.weight_increment} > 0 THEN (${TABLE}.requested_quantity)*100.000/100000
+ELSE ${TABLE}.requested_quantity
+            END ;;
+    value_format: "0.00"
+  }
+
+  dimension: Total_quantity_new_dimension {
+    type: number
+    sql: CASE
+                   WHEN ${spree_variants.weight_increment} > 0 THEN (${TABLE}.quantity)*100.000/100000
+ELSE ${TABLE}.quantity
+            END ;;
+    value_format: "0.00"
+  }
+
+  measure: outofstockqty{
+    type: number
+    sql: (${Requested_quantity_new}- ${Total_quantity_new});;
+    value_format: "0.00"
+  }
+
+  measure: Avg_price {
+    type : average
+    sql: ${price_new} ;;
+    value_format: "0.00"
+  }
+
+  measure: outofstockvalue{
+    type: number
+    sql: (${Requested_quantity_new}- ${Total_quantity_new})*${Avg_price};;
+    value_format: "0.00"
+  }
+
+
+  measure: Requested_quantity_new {
+    type: sum
+    sql: CASE
+                   WHEN ${spree_variants.weight_increment} > 0 THEN (${TABLE}.requested_quantity)*100.000/100000
+ELSE ${TABLE}.requested_quantity
+            END ;;
+    value_format: "0.00"
+  }
+
+  measure: Total_quantity_new {
+    type: sum
+    sql: CASE
+                   WHEN ${spree_variants.weight_increment} > 0 THEN (${TABLE}.quantity)*100.000/100000
+ELSE ${TABLE}.quantity
+            END ;;
+    value_format: "0.00"
+  }
+
+
+  dimension: Is_picked{
+    type: yesno
+    sql: ${quantity} <> 0;;
+
+  }
+  measure: Total_picked {
+    type: count
+    filters: {
+      field: Is_picked
+      value: "yes"
+    }
+  }
+
+  measure: OOS_items_sales {
+    sql: ${price} * ${Requested_quantity_new_dimension} ;;
+    type: sum
+    value_format: "#,##0.00 \" SAR\""
+    filters: {
+      field: Is_picked
+      value: "no"
+    }
+    }
+
+
+
+  measure: Picked_Percentage{
+    type: number
+    sql: (${Total_picked}*100.000/NULLIF(${count},0));;
+    value_format: "0.00\%"
+  }
+
+  measure: OOS_items {
+    type: count
+    filters: {
+      field: Is_picked
+      value: "no"
+    }
+  }
+
   measure: count {
     type: count
     drill_fields: [id]

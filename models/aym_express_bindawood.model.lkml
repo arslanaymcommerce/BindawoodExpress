@@ -390,6 +390,13 @@ sql_always_where:  (danube_supermarket_translations.locale = 'en') ;;
     sql_on: ${spree_packers.whodunnit} = ${spree_box_packers.id};;
   }
 
+# Orders > Bundle_quantity
+  join: bundle_quantity {
+    type: left_outer
+    relationship: one_to_many
+    sql_on:  ${bundle_quantity.master_product_id} = ${spree_bundle_products.master_product_id} ;;
+  }
+
 
   # Orders > Spree Fulfilments > Versions>Delivery
   join: Spree_Delivery{
