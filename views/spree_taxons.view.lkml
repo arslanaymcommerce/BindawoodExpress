@@ -282,23 +282,33 @@ view: spree_taxons {
     drill_fields: [detail*]
   }
 
+  dimension: taxonname_parent {
+    type: string
+    sql: (select st.name from  public.spree_taxon_translations st where st.spree_taxon_id = ${TABLE}.parent_id and st.locale = 'en');;
+  }
+
+
+  dimension: parent_taxonname_en {
+    type: string
+    sql: (select st.name from  public.spree_taxon_translations st where st.spree_taxon_id = ${TABLE}.parent_id and st.locale = 'en');;
+  }
   # ----- Sets of fields for drilling ------
   set: detail {
     fields: [
-	id,
-	icon_file_name,
-	product_listing_background_image_ar_file_name,
-	product_listing_background_image_en_file_name,
-	icon_thumbnail_ar_file_name,
-	home_background_image_file_name,
-	background_image_en_file_name,
-	icon_thumbnail_en_file_name,
-	product_image_tag_en_file_name,
-	background_image_ar_file_name,
-	name,
-	product_image_tag_ar_file_name,
-	spree_taxon_translations.count
-	]
+  id,
+  icon_file_name,
+  product_listing_background_image_ar_file_name,
+  product_listing_background_image_en_file_name,
+  icon_thumbnail_ar_file_name,
+  home_background_image_file_name,
+  background_image_en_file_name,
+  icon_thumbnail_en_file_name,
+  product_image_tag_en_file_name,
+  background_image_ar_file_name,
+  name,
+  product_image_tag_ar_file_name,
+  spree_taxon_translations.count
+  ]
   }
 
 }

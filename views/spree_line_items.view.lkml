@@ -126,6 +126,15 @@ view: spree_line_items {
   }
 
 
+  dimension: barcode {
+    type: string
+    sql: CASE
+          WHEN ${barcode_1} IS NULL THEN ${spree_product_barcodes.barcode}
+          ELSE ${spree_bundle_products.barcode}
+          END;;
+  }
+
+
   dimension: price_new {
     type: number
     sql: CASE
