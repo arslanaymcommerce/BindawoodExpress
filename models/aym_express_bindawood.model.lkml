@@ -312,6 +312,17 @@ sql_always_where:  (danube_supermarket_translations.locale = 'en') ;;
     sql_on: ${spree_orders.ship_address_id} = ${spree_addresses.id} ;;
   }
 
+  join: payment_type {
+    relationship: one_to_one
+    sql_on: ${spree_orders.number} = ${payment_type.spree_orders_number};;
+  }
+
+# Orders > Spree Payments > New derived table created
+  join: payments_new {
+    sql_on: ${spree_orders.id} = ${payments_new.order_id} ;;
+    relationship: one_to_one
+  }
+
   # Orders > Spree Addresses > Spree Districts
   join: spree_districts {
     relationship: many_to_one

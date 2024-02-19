@@ -736,6 +736,12 @@ view: spree_orders {
   }
 
   ###----------------------------------
+  measure: total_received_amount{
+    type: number
+    sql: ${Amount_received_apple_pay}+${Amount_received_Credit_Card}+${Amount_received_Drift_Credit_Payment}
+      +${Amount_received_POD};;
+    value_format: "#,##0.00 \" SAR\""
+  }
 
 
 
