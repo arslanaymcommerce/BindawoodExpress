@@ -406,7 +406,7 @@ view: offline_pricing_darkstore {
 
         when: {
           sql: ${TABLE}.supermarket_id  = 97 ;;
-          label: "7011"
+          label: "57011"
         }
 
       }
