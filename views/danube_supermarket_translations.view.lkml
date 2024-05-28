@@ -352,7 +352,7 @@ view: danube_supermarket_translations {
     case: {
       when: {
         sql: ${TABLE}.danube_supermarket_id  in (98) ;;
-        label: "7011"
+        label: "57011"
       }
 
     }
