@@ -743,7 +743,47 @@ view: spree_orders {
     value_format: "#,##0.00 \" SAR\""
   }
 
+  dimension_group: first_order_date {
+    type: time
+    timeframes: [  raw,
+      hour,
+      time,
+      date,
+      week,
+      month,
+      month_name,
+      quarter,
+      year,
+      day_of_week,
+      hour_of_day,
+      day_of_month,
+      day_of_week_index,
+      week_of_year,
+      time_of_day]
+    sql: (select   MIN(NULLIF(ss.completed_at, null)) AS first_order from spree_orders ss where ss.user_id = ${user_id} );;
+  }
 
+  dimension_group: between_firstorder {
+    type: duration
+    intervals: [second]
+    sql_start: ${first_order_date_time} ;;
+    sql_end: ${completed_time} ;;
+  }
+
+  dimension: datediff_1 {
+    type: yesno
+    sql: ${seconds_between_firstorder} = 0 ;;
+  }
+
+
+  measure: first_Order {
+    type: count_distinct
+    sql: ${user_id} ;;
+    filters: {
+      field: datediff_1
+      value: "yes"
+    }
+  }
 
 
   measure: Countit {
