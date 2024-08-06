@@ -54,6 +54,11 @@ view: spree_cashbacks {
     timeframes: [raw, time, date, week, month, quarter, year]
     sql: ${TABLE}."updated_at" ;;
   }
+  measure: TotalCashback_amount {
+    type: sum
+    sql: ${amount} ;;
+    value_format: "#,##0.00 \" SAR\""
+  }
   measure: count {
     type: count
     drill_fields: [id]
