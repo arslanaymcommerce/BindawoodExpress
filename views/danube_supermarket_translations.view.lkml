@@ -351,8 +351,36 @@ view: danube_supermarket_translations {
   dimension: DarkStore_Code {
     case: {
       when: {
-        sql: ${TABLE}.danube_supermarket_id  in (98) ;;
+        sql: ${danube_supermarket_id} in (98) ;;
         label: "57011"
+      }
+      when: {
+        sql: ${danube_supermarket_id}  = 20 ;;
+        label: "9"
+      }
+      when: {
+        sql: ${danube_supermarket_id}  = 24 ;;
+        label: "41"
+      }
+      when: {
+        sql: ${danube_supermarket_id}  = 99 ;;
+        label: "40"
+      }
+      when: {
+        sql: ${danube_supermarket_id}  = 101 ;;
+        label: "4"
+      }
+      when: {
+        sql: ${danube_supermarket_id}  = 102 ;;
+        label: "16"
+      }
+      when: {
+        sql: ${danube_supermarket_id}  = 103 ;;
+        label: "21"
+      }
+      when: {
+        sql: ${danube_supermarket_id}  = 104 ;;
+        label: "36"
       }
 
     }
