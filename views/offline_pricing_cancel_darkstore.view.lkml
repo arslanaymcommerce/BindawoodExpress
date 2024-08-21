@@ -104,7 +104,7 @@ view: offline_pricing_cancel_darkstore {
         and i.variant_id not in (select v.id variant_id from public.danube_supermarket_products p , spree_variants v
         where v.product_id = p.product_id)
         --and COALESCE(o.parent_id,-1) = -1
-        and s.spree_zone_id in (19,97,98,100,101,102,103)
+        and s.spree_zone_id in (19,97)--,98,100,101,102,103)
         and  CAST( vs.object_changes AS TEXT ) like '%out_for_delivery%'
         and v.sku not in ('11572820', '11572830', '11572840', '11572850', '11572860', '11572870', '11572880', '11572890', '11572900', '11572910', '11572920', '11572930', '11572940', '11572950', '11572960', '11572970', '11573170', '11573180', '11573190', '11573200', '11573210', '11573260', '11573270', '11573280', '11573310', '11573320', '11573330', '11573340', '11573350', '11573360', '11573370', '11573380', '11573390', '11573400', '11573410', '11573420', '11573570', '11573580', '11573600', '11573610', '11573650', '11573670', '11573680', '11573690', '11573700', '11573710', '11573720', '11573740', 'Mobily20', 'Mobily25', 'Mobily34.50', 'Mobily57.50', 'Mobily115', 'Mobily230', 'Mobily300', 'Mobily395', 'Sawa20', 'Sawa30', 'Sawa50', 'Sawa100', 'Sawa200', 'Sawa300', 'Zain020', 'Zain029', 'Zain034', 'Zain057', 'Zain059', 'Zain0115', 'Zain0140', 'Zain0230', 'Zain0249', 'Zain0345', 'Zain0460', 'Zain0575', 'gc50', 'gc100', 'gc150', 'gc200', 'gc250', 'gc300', 'gc500', 'gc1000')
 
@@ -312,26 +312,6 @@ view: offline_pricing_cancel_darkstore {
       when: {
         sql: ${TABLE}.supermarket_id  = 97 ;;
         label: "57011"
-      }
-      when: {
-        sql: ${TABLE}.supermarket_id  = 98 ;;
-        label: "40"
-      }
-      when: {
-        sql: ${TABLE}.supermarket_id  = 100 ;;
-        label: "4"
-      }
-      when: {
-        sql: ${TABLE}.supermarket_id  = 101 ;;
-        label: "16"
-      }
-      when: {
-        sql: ${TABLE}.supermarket_id  = 102 ;;
-        label: "21"
-      }
-      when: {
-        sql: ${TABLE}.supermarket_id  = 103 ;;
-        label: "36"
       }
 
       }
