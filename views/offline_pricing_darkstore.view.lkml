@@ -221,7 +221,7 @@ view: offline_pricing_darkstore {
       where
       i.custom_product_id is not null
       and i.quantity > 0
-      and s.spree_zone_id in (97,19)--,98,100,101,102,103)
+      and s.spree_zone_id in (97,19,17)--,98,100,101,102,103)
       and COALESCE(o.parent_id,-1) = -1
       and f.state in ('delivered_partially_returned', 'delivered','partially_delivered')
       ;;
@@ -409,6 +409,10 @@ view: offline_pricing_darkstore {
       when: {
         sql: ${TABLE}.supermarket_id  = 19 ;;
         label: "9"
+      }
+      when: {
+        sql: ${TABLE}.supermarket_id  = 17 ;;
+        label: "3"
       }
       when: {
         sql: ${TABLE}.supermarket_id  = 97 ;;
