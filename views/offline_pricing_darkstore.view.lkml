@@ -107,7 +107,7 @@ view: offline_pricing_darkstore {
       and v.sku not in ('11572820', '11572830', '11572840', '11572850', '11572860', '11572870', '11572880', '11572890', '11572900', '11572910', '11572920', '11572930', '11572940', '11572950', '11572960', '11572970', '11573170', '11573180', '11573190', '11573200', '11573210', '11573260', '11573270', '11573280', '11573310', '11573320', '11573330', '11573340', '11573350', '11573360', '11573370', '11573380', '11573390', '11573400', '11573410', '11573420', '11573570', '11573580', '11573600', '11573610', '11573650', '11573670', '11573680', '11573690', '11573700', '11573710', '11573720', '11573740', 'Mobily20', 'Mobily25', 'Mobily34.50', 'Mobily57.50', 'Mobily115', 'Mobily230', 'Mobily300', 'Mobily395', 'Sawa20', 'Sawa30', 'Sawa50', 'Sawa100', 'Sawa200', 'Sawa300', 'Zain020', 'Zain029', 'Zain034', 'Zain057', 'Zain059', 'Zain0115',
       'Zain0140', 'Zain0230', 'Zain0249', 'Zain0345', 'Zain0460', 'Zain0575', 'gc50', 'gc100', 'gc150', 'gc200', 'gc250', 'gc300', 'gc500', 'gc1000',
       'SKUs140x','Card2','Card3','Card4','Card 5','Card7')
-      and s.spree_zone_id in (97,19)--,98,100,101,102,103)
+      and s.spree_zone_id in (97,17)--,98,100,101,102,103)
       group by
       ---vs.object_changes,vs2.object_changes,
       o.number , o.completed_At,  f.state, o.id ,s.spree_zone_id,
@@ -221,7 +221,7 @@ view: offline_pricing_darkstore {
       where
       i.custom_product_id is not null
       and i.quantity > 0
-      and s.spree_zone_id in (97,19,17)--,98,100,101,102,103)
+      and s.spree_zone_id in (97,17)--,98,100,101,102,103)
       and COALESCE(o.parent_id,-1) = -1
       and f.state in ('delivered_partially_returned', 'delivered','partially_delivered')
       ;;
@@ -406,10 +406,7 @@ view: offline_pricing_darkstore {
   dimension: supermarket_id {
     case: {
 
-      when: {
-        sql: ${TABLE}.supermarket_id  = 19 ;;
-        label: "9"
-      }
+
       when: {
         sql: ${TABLE}.supermarket_id  = 17 ;;
         label: "3"
