@@ -69,6 +69,30 @@ view: spree_payments {
     timeframes: [raw, time, date, week, month, quarter, year]
     sql: ${TABLE}."updated_at" ;;
   }
+
+
+  dimension: loyalty_redeemed_total {
+    type: number
+    sql: case when ${TABLE}.payment_method_id = 7 then ${TABLE}.amount else 0 end ;;
+  }
+
+  dimension: total {
+    type: number
+    sql: ${TABLE}.amount ;;
+  }
+
+
+  measure: total_amount{
+    type: sum
+    sql: ${total} ;;
+    value_format: "#,##0.00 \" SAR\""
+  }
+
+  measure: total_loyalty_redeemed_amount{
+    type: sum
+    sql: ${loyalty_redeemed_total} ;;
+    value_format: "#,##0.00 \" SAR\""
+  }
   measure: count {
     type: count
     drill_fields: [id]
