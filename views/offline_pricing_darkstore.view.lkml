@@ -333,11 +333,11 @@ view: offline_pricing_darkstore {
     sql: ${TABLE}.promo_total ;;
   }
 
-
   dimension: number{
     type: string
-    sql: case when  ${TABLE}.number  like 'JHZ%' then concat('J',substring( ${TABLE}.number,4)) else  ${TABLE}.number
-      end ;;
+    sql: case when  ${TABLE}.number  like 'JHZ%' then concat('J',substring( ${TABLE}.number,4))
+              when  ${TABLE}.number  like 'CHZ%' then concat('C',substring( ${TABLE}.number,4)) else  ${TABLE}.number
+   end ;;
   }
 
   dimension: mobile_phone_number {
