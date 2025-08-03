@@ -387,6 +387,16 @@ view: danube_supermarket_translations {
         label: "03"
       }
 
+
+
+    when: {
+      sql: ${danube_supermarket_id}  = 157 ;;
+      label: "6"
+    }
+
+
+
+
     }
     hidden: no
   }
