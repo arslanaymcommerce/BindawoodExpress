@@ -406,22 +406,22 @@ view: offline_pricing_darkstore {
   dimension: supermarket_id {
     case: {
 
-
-
       when: {
         sql: ${TABLE}.supermarket_id  = 97 ;;
         label: "57011"
       }
 
       when: {
-        sql: ${TABLE}.supermarket_id  = 157 ;;
-        label: "6"
+        sql: ${TABLE}.supermarket_id  = 96 ;;
+        label: "57006"
       }
 
+      when: {
+        sql: ${TABLE}.supermarket_id  = 155 ;;
+        label: "57710"
+      }
 
-
-
-
+      else: "0"
 
     }
     hidden: no
