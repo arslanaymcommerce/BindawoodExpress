@@ -387,20 +387,27 @@ view: danube_supermarket_translations {
         label: "03"
       }
 
-
-
     when: {
       sql: ${danube_supermarket_id}  = 157 ;;
       label: "6"
     }
 
-
-
-
     }
     hidden: no
   }
 
+  dimension: jda_supermarket {
+    type: string
+    sql: (select jda_supermarket from danube_supermarkets where id =  ${danube_supermarket_id}) ;;
+  }
+
+  dimension: darkstore_code_new {
+    type: string
+    sql: Case
+            when ${DarkStore_Code} is not null then ${DarkStore_Code}
+            else ${jda_supermarket}
+            end;;
+  }
 
   dimension: locale {
     type: string

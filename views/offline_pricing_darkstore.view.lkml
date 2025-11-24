@@ -31,7 +31,7 @@ view: offline_pricing_darkstore {
               mp.bundle_items as bundle_items,
               sp.payment_name as payment_name,
 
-      f.state/*,
+              f.state/*,
       max(vs.created_at) out_for_delivery_date,
       vs.object_changes out_for_delivery_status,
       max(vs2.created_at) delivered_Date,
@@ -337,6 +337,7 @@ view: offline_pricing_darkstore {
     type: string
     sql: case when  ${TABLE}.number  like 'JHZ%' then concat('J',substring( ${TABLE}.number,4))
               when  ${TABLE}.number  like 'CHZ%' then concat('C',substring( ${TABLE}.number,4)) else  ${TABLE}.number
+              when  ${TABLE}.number  like 'MSL%' then concat('M',substring( ${TABLE}.number,4)) else  ${TABLE}.number
    end ;;
   }
 
