@@ -31,7 +31,8 @@ view: offline_pricing_darkstore {
               mp.bundle_items as bundle_items,
               sp.payment_name as payment_name,
 
-              f.state/*,
+              f.state,
+              sp_p.loyalty_sync_key as loyalty_sync_key/*,
       max(vs.created_at) out_for_delivery_date,
       vs.object_changes out_for_delivery_status,
       max(vs2.created_at) delivered_Date,
@@ -59,6 +60,14 @@ view: offline_pricing_darkstore {
       s.order_id = i.order_id
       left join spree_variants v on
       v.id = i.variant_id
+
+         left join spree_products sp_p
+  on sp_p.id = (
+    select product_id
+    from spree_variants sv
+    where sv.id = i.variant_id
+  )
+
       left join (
       select
       master_product_id, child_product_id, quantity, barcode
@@ -125,7 +134,7 @@ view: offline_pricing_darkstore {
       p.barcode,
       p.quantity,
       mp.bundle_items,
-      sp.payment_name
+      sp.payment_name, sp_p.loyalty_sync_key
 
       union all
 
@@ -163,7 +172,8 @@ view: offline_pricing_darkstore {
       p.quantity as bundle_quantity,
       mp.bundle_items as bundle_items,
       sp.payment_name as payment_name,
-      f.state
+      f.state,
+      "NA" as loyalty_sync_key
       from
       spree_orders o
       left join spree_custom_line_items i on
@@ -322,10 +332,13 @@ view: offline_pricing_darkstore {
 
   dimension: barcodes {
     type: string
-    sql: CASE
-              WHEN ${TABLE}.barcode IS NULL
-              THEN ${TABLE}.bundle_barcode
-              ELSE ${TABLE}.barcode END ;;
+    sql:
+    CASE
+      WHEN ${TABLE}.barcode IS NOT NULL THEN ${TABLE}.barcode
+      WHEN ${TABLE}.bundle_barcode IS NOT NULL THEN ${TABLE}.bundle_barcode
+      WHEN ${TABLE}.loyalty_sync_key IS NOT NULL THEN ${TABLE}.loyalty_sync_key
+      ELSE NULL
+    END ;;
   }
 
   dimension: promo_total {
@@ -336,8 +349,9 @@ view: offline_pricing_darkstore {
   dimension: number{
     type: string
     sql: case when  ${TABLE}.number  like 'JHZ%' then concat('J',substring( ${TABLE}.number,4))
-              when  ${TABLE}.number  like 'CHZ%' then concat('C',substring( ${TABLE}.number,4)) else  ${TABLE}.number
-              when  ${TABLE}.number  like 'MSL%' then concat('M',substring( ${TABLE}.number,4)) else  ${TABLE}.number
+              when  ${TABLE}.number  like 'CHZ%' then concat('C',substring( ${TABLE}.number,4))
+              when  ${TABLE}.number  like 'MSL%' then concat('M',substring( ${TABLE}.number,4))
+              else  ${TABLE}.number
    end ;;
   }
 
