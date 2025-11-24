@@ -622,7 +622,7 @@ sql_always_where:  (danube_supermarket_translations.locale = 'en') ;;
   # Orders > Danube Slot To Orders > Danube Time Slot Schedules > Spree Zones > Danube Supermarkets > Danube Supermarkets Translations
   join: danube_supermarket_translations {
     view_label: "Danube Supermarkets"
-    fields: [name,locale,city,supermarket_ID,Region,store_mobile_no,danube_supermarket_translations.DarkStore_Code]
+    fields: [name,locale,city,supermarket_ID,Region,store_mobile_no,danube_supermarket_translations.DarkStore_Code, danube_supermarket_translations.darkstore_code_new]
     sql_on: ${danube_supermarkets.id} = ${danube_supermarket_translations.danube_supermarket_id} ;;
     relationship: many_to_one
   }
