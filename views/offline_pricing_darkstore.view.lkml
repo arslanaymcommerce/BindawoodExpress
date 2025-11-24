@@ -173,7 +173,7 @@ view: offline_pricing_darkstore {
       mp.bundle_items as bundle_items,
       sp.payment_name as payment_name,
       f.state,
-      "NA" as loyalty_sync_key
+      'NA' as loyalty_sync_key
       from
       spree_orders o
       left join spree_custom_line_items i on
