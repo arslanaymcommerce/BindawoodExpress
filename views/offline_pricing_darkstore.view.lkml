@@ -32,7 +32,9 @@ view: offline_pricing_darkstore {
               sp.payment_name as payment_name,
 
               f.state,
-              sp_p.loyalty_sync_key as loyalty_sync_key/*,
+              sp_p.loyalty_sync_key as loyalty_sync_key,
+              sp_p.electronic_product_code as electronic_product_code
+              /*,
       max(vs.created_at) out_for_delivery_date,
       vs.object_changes out_for_delivery_status,
       max(vs2.created_at) delivered_Date,
@@ -134,7 +136,7 @@ view: offline_pricing_darkstore {
       p.barcode,
       p.quantity,
       mp.bundle_items,
-      sp.payment_name, sp_p.loyalty_sync_key
+      sp.payment_name, sp_p.loyalty_sync_key, sp_p.electronic_product_code
 
       union all
 
@@ -173,7 +175,8 @@ view: offline_pricing_darkstore {
       mp.bundle_items as bundle_items,
       sp.payment_name as payment_name,
       f.state,
-      'NA' as loyalty_sync_key
+      'NA' as loyalty_sync_key,
+      'NA' as electronic_product_code
       from
       spree_orders o
       left join spree_custom_line_items i on
@@ -337,6 +340,7 @@ view: offline_pricing_darkstore {
       WHEN ${TABLE}.barcode IS NOT NULL THEN ${TABLE}.barcode
       WHEN ${TABLE}.bundle_barcode IS NOT NULL THEN ${TABLE}.bundle_barcode
       WHEN ${TABLE}.loyalty_sync_key IS NOT NULL THEN ${TABLE}.loyalty_sync_key
+       WHEN ${TABLE}.electronic_product_code IS NOT NULL THEN ${TABLE}.electronic_product_code
       ELSE NULL
     END ;;
   }
