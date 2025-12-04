@@ -32,8 +32,15 @@ view: offline_pricing_darkstore {
               sp.payment_name as payment_name,
 
               f.state,
-              sp_p.loyalty_sync_key as loyalty_sync_key,
-              sp_p.electronic_product_code as electronic_product_code
+                CASE
+                   WHEN LENGTH(sp_p.loyalty_sync_key) >= 13 THEN LEFT(sp_p.loyalty_sync_key, 12)
+                    ELSE sp_p.loyalty_sync_key
+                    END AS loyalty_sync_key,
+
+                CASE
+                  WHEN LENGTH(sp_p.electronic_product_code) >= 13 THEN LEFT(sp_p.electronic_product_code, 12)
+                  ELSE sp_p.electronic_product_code
+                  END  as electronic_product_code
               /*,
       max(vs.created_at) out_for_delivery_date,
       vs.object_changes out_for_delivery_status,
