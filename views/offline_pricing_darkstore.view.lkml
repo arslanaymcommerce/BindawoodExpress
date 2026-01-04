@@ -447,6 +447,11 @@ view: offline_pricing_darkstore {
         label: "57710"
       }
 
+      when: {
+        sql: ${TABLE}.supermarket_id  = 164 ;;
+        label: "57001"
+      }
+
       else: "0"
 
     }
