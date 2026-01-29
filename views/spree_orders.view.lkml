@@ -362,6 +362,25 @@ view: spree_orders {
     value_format: "#,##0.00 \" SAR\""
   }
 
+  measure: Amount_received_Tamara {
+    type: sum
+    sql: ${spree_payments.amount} ;;
+    filters: {
+      field: spree_payment_method_translations.name
+      value: "Tamara"
+    }
+    filters: {
+      field: spree_payments.state
+      value: "completed"
+    }
+    filters: {
+      field: spree_fulfilments.state
+      value: "delivered,delivered_partially_returned"
+    }
+    value_format: "#,##0.00 \" SAR\""
+  }
+
+
   measure: Amount_received_Store_Credit {
     type: sum
     sql: ${spree_payments.amount} ;;
@@ -739,7 +758,7 @@ view: spree_orders {
   measure: total_received_amount{
     type: number
     sql: ${Amount_received_apple_pay}+${Amount_received_Credit_Card}+${Amount_received_Drift_Credit_Payment}
-      +${Amount_received_POD};;
+      +${Amount_received_POD} + ${Amount_received_Tamara};;
     value_format: "#,##0.00 \" SAR\""
   }
 
