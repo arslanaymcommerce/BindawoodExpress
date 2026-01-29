@@ -303,7 +303,7 @@ view: spree_orders {
     sql: ${spree_payments.amount} ;;
     filters: {
       field: spree_payment_methods.id
-      value: "4,8"
+      value: "4"
     }
     filters: {
       field: credit_payment_state
