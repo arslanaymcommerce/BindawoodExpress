@@ -190,6 +190,16 @@ ELSE ${TABLE}.requested_quantity
     value_format: "0.00"
   }
 
+  measure: Sum_Requested_Updated {  ## This requested item measure is to handle replaced sku requested qty
+    type: sum
+    sql: Case
+        when ${replaced} = 'yes' and ${quantity} <= 0
+        Then 0
+        Else ${Requested_quantity_new_dimension}
+        END ;;
+    value_format: "0.00"
+  }
+
   measure: Total_quantity_new {
     type: sum
     sql: CASE
