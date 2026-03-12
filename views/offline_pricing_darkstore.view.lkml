@@ -22,7 +22,7 @@ view: offline_pricing_darkstore {
               i.offline_price,
               i.on_sale,
               b.barcode,
-              s.time_slot_date,
+              (f.updated_at + INTERVAL '3 hours')::DATE as time_slot_date,
               v.weight_increment,
               i.variant_id,
               p.child_product_id,
@@ -117,7 +117,7 @@ view: offline_pricing_darkstore {
       sp.order_id = o.id
       where
       i.quantity > 0
-      and f.state in ('delivered_partially_returned', 'delivered','out_for_delivery', 'partially_delivered')
+      and f.state in ('delivered_partially_returned', 'delivered', 'partially_delivered')
       --  and o.order_type = 'Express'
       and i.variant_id not in (select v.id variant_id from public.danube_supermarket_products p , spree_variants v
       where v.product_id = p.product_id)
@@ -136,7 +136,7 @@ view: offline_pricing_darkstore {
       i.offline_price,
       i.on_sale,
       b.barcode,
-      s.time_slot_date,
+      (f.updated_at + INTERVAL '3 hours')::DATE,
       v.weight_increment,
       i.variant_id,
       p.child_product_id,
@@ -173,7 +173,7 @@ view: offline_pricing_darkstore {
       then substring(cast(b.barcode as text),2,position(',' in cast(b.barcode as text))-2)
       else substring(cast(b.barcode as text),2,length(cast(b.barcode as text))-2)
       end)barcode,
-      s.time_slot_date,
+      (f.updated_at + INTERVAL '3 hours')::DATE as time_slot_date,
       b.weight weight_increment,
       i.custom_product_id as variant_id,
       p.child_product_id,
